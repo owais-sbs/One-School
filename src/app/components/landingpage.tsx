@@ -185,36 +185,25 @@ const Navbar = () => {
                 : 'bg-white/10 backdrop-blur-md border-white/20'
             }`}
           >
-            {['Home', 'Features', 'Showcase', 'Automation', 'Plans'].map((item) => (
+            {[
+                { label: 'Home', href: '#home' },
+                { label: 'Features', href: '#features' },
+                { label: 'Showcase', href: '#showcase' },
+                { label: 'Automation', href: '#automation' },
+                { label: 'Plans', href: '#plans' },
+              ].map((item) => (
               <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
+                key={item.label}
+                href={item.href}
                 className={`text-sm font-semibold transition-colors ${
                   scrolled
                     ? 'text-slate-600 hover:text-blue-600'
                     : 'text-white/80 hover:text-white'
                 }`}
               >
-                {item}
+                {item.label}
               </a>
             ))}
-          </motion.div>
-
-          {/* Desktop CTA */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="hidden md:flex"
-          >
-            <button
-              className={`px-7 py-3 rounded-full text-sm font-bold transition-all hover:shadow-lg hover:-translate-y-0.5 active:scale-95 ${
-                scrolled
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'
-                  : 'bg-white text-blue-600 hover:bg-blue-50'
-              }`}
-            >
-              Login
-            </button>
           </motion.div>
 
           {/* Mobile hamburger */}
@@ -253,9 +242,6 @@ const Navbar = () => {
                   {item}
                 </a>
               ))}
-              <button className="w-full bg-blue-600 text-white px-6 py-4 rounded-2xl text-lg font-bold shadow-lg shadow-blue-200">
-                Login
-              </button>
             </div>
           </motion.div>
         )}
@@ -267,20 +253,40 @@ const Navbar = () => {
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  HERO                                                                       */
 /* ─────────────────────────────────────────────────────────────────────────── */
+const HERO_IMAGES = [
+  'https://i1-c.pinimg.com/736x/85/55/1a/85551a56517d3ddd4a42e407e916c7c9.jpg',
+  'https://i1-c.pinimg.com/736x/0b/1d/a3/0b1da3730c0e59a94ef39e28a74afd7d.jpg',
+  'https://i.pinimg.com/736x/b6/94/fc/b694fc64e30bb45061e608daf64b64c9.jpg',
+];
+
 const HeroSection = () => {
   const { open } = useVideoModal();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-  <section id="home" className="relative min-h-screen flex flex-col overflow-hidden bg-white">
+  <section id="home" className="relative min-h-screen flex flex-col overflow-hidden bg-black">
     <div className="absolute inset-0 z-0">
-      <img
-        src="/hero.png"
-        alt="School Campus"
-        className="w-full h-full object-cover object-center"
-        style={{ filter: 'brightness(0.85)' }}
-      />
-      <div className="absolute inset-0 bg-blue-700/35" />
-      <div className="absolute inset-x-0 top-0 h-[60vh] bg-gradient-to-b from-blue-900/20 via-blue-700/10 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-blue-900/15 to-transparent" />
+      <AnimatePresence mode="sync">
+        <motion.img
+          key={current}
+          src={HERO_IMAGES[current]}
+          alt="School Campus"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: 'easeInOut' }}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+      </AnimatePresence>
+      {/* Subtle dark gradient so text stays readable */}
+      <div className="absolute inset-0 bg-black/30" />
     </div>
 
     <div className="relative z-10 flex-1 flex flex-col items-center justify-center pt-36 pb-16 px-4 sm:px-6 lg:px-8 text-center">
@@ -294,10 +300,10 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-sky-300/40 mb-8"
         >
-          <Sparkles className="text-white" size={14} />
-          <span className="text-white text-xs font-bold tracking-widest uppercase">
+          <Sparkles className="text-sky-300" size={14} />
+          <span className="text-sky-200 text-xs font-bold tracking-widest uppercase">
             The Future of School Management
           </span>
         </motion.div>
@@ -305,10 +311,10 @@ const HeroSection = () => {
         <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold text-white leading-[0.95] mb-8 tracking-tighter drop-shadow-2xl">
           Manage your school{' '}
           <br className="hidden md:block" />
-          <span className="text-blue-200">with one smart system</span>
+          <span className="text-sky-300">with one smart system</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-white/65 mb-12 leading-relaxed font-medium max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-white/80 mb-12 leading-relaxed font-medium max-w-2xl mx-auto">
           The digital spine for your institution — connecting students, parents, teachers, and
           administrators in one premium SaaS ecosystem.
         </p>
@@ -317,18 +323,31 @@ const HeroSection = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-full sm:w-auto bg-blue-600 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-blue-700 transition-all"
+            className="w-full sm:w-auto bg-sky-500 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-sky-500/30 flex items-center justify-center gap-2 hover:bg-sky-400 transition-all"
           >
             Get Started <ArrowRight size={18} />
           </motion.button>
           <motion.button
-            whileHover={{ backgroundColor: 'rgba(255,255,255,0.25)' }}
-            className="w-full sm:w-auto bg-white/15 backdrop-blur-md text-white border border-white/40 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2"
+            whileHover={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
+            className="w-full sm:w-auto bg-black/20 backdrop-blur-md text-white border border-sky-300/40 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2"
           >
             View Plans
           </motion.button>
         </div>
       </motion.div>
+    </div>
+
+    {/* Slide indicators */}
+    <div className="relative z-10 flex justify-center gap-2 pb-6">
+      {HERO_IMAGES.map((_, i) => (
+        <button
+          key={i}
+          onClick={() => setCurrent(i)}
+          className={`transition-all duration-300 rounded-full ${
+            i === current ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+          }`}
+        />
+      ))}
     </div>
 
     {/* Stats bar */}
@@ -358,53 +377,6 @@ const HeroSection = () => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  FEATURE STRIP                                                              */
-/* ─────────────────────────────────────────────────────────────────────────── */
-const FeatureStrip = () => {
-  const features = [
-    { icon: <GraduationCap size={26} />, title: 'Academic Hub', desc: 'Gradebooks & Profiles' },
-    { icon: <Banknote size={26} />, title: 'Finance Core', desc: 'Automated Billing' },
-    { icon: <MessageSquare size={26} />, title: 'Unified Comms', desc: 'WhatsApp & Alerts' },
-    { icon: <PieChart size={26} />, title: 'AI Analytics', desc: 'Visual Reporting' },
-  ];
-
-  return (
-    <section id="features" className="py-24 bg-orange-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial="initial"
-          whileInView="whileInView"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={{
-            initial: {},
-            whileInView: { transition: { staggerChildren: 0.1 } },
-          }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {features.map((f, i) => (
-            <motion.div
-              key={i}
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                whileInView: { opacity: 1, y: 0 },
-              }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -10 }}
-              className="bg-white border border-black p-8 rounded-[2.5rem] group cursor-pointer hover:shadow-2xl hover:shadow-black/10 transition-all duration-300"
-            >
-              <div className="w-14 h-14 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                {f.icon}
-              </div>
-              <h3 className="text-xl font-bold text-blue-950 mb-2">{f.title}</h3>
-              <p className="text-sm text-slate-500 font-medium">{f.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-};
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  SHOWCASE — Every module. One screen.                                       */
@@ -433,11 +405,11 @@ const BrowserMockup = ({ src, alt, url }: { src: string; alt: string; url: strin
 const ShowcaseSection = () => {
   const { open } = useVideoModal();
   return (
-  <section id="showcase" className="py-28 bg-white relative overflow-hidden">
+  <section id="showcase" className="py-24 bg-white relative overflow-hidden">
     {/* Dot grid background */}
     <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:22px_22px] opacity-[0.05] pointer-events-none" />
 
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-28">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-24">
 
       {/* ── Section header ── */}
       <motion.div {...fadeUp(0)} className="text-center">
@@ -623,8 +595,17 @@ const ShowcaseSection = () => {
     </div>
 
     {/* ── Module cards grid — full width black ── */}
-    <div className="w-full bg-black py-16 mt-28">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full relative py-16 mt-16 overflow-hidden">
+      {/* Background image with black overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://i1-c.pinimg.com/736x/98/e3/7d/98e37dda773cee472b1e69a08455eaa1.jpg"
+          alt="Background"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <motion.div
         initial="initial" whileInView="whileInView"
         viewport={{ once: true, margin: '-60px' }}
@@ -697,8 +678,7 @@ const AutomationSection = () => {
   ];
 
   return (
-    <section className="py-32 bg-white relative overflow-hidden">
-      {/* Top gradient fade from cream/beige */}
+    <section id="features" className="py-24 bg-white relative overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-orange-50 to-transparent pointer-events-none z-10" />
       {/* Bottom gradient fade to blue */}
       <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-blue-50/50 to-transparent pointer-events-none z-10" />
@@ -759,7 +739,7 @@ const AutomationSection = () => {
 const WhatsAppSection = () => {
   const { open } = useVideoModal();
   return (
-  <section id="automation" className="py-32 bg-black relative overflow-hidden">
+  <section id="automation" className="py-24 bg-black relative overflow-hidden">
     {/* Top gradient fade from blue-50 */}
     <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none z-10" />
 
@@ -961,7 +941,7 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="plans" className="py-32 bg-white relative overflow-hidden">
+    <section id="plans" className="py-24 bg-white relative overflow-hidden">
       {/* Top gradient fade from black (WhatsApp section) */}
       <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
 
@@ -999,7 +979,7 @@ const PricingSection = () => {
               whileHover={{ y: -6 }}
               className={`rounded-3xl p-8 flex flex-col gap-5 transition-all duration-300 border-2 ${
                 plan.highlight
-                  ? 'bg-blue-600 text-white shadow-2xl shadow-blue-500/20 scale-[1.02] border-black'
+                  ? 'bg-blue-400 text-white shadow-2xl shadow-blue-400/30 scale-[1.02] border-blue-300'
                   : 'bg-white border-black shadow-sm hover:shadow-xl'
               }`}
             >
@@ -1079,39 +1059,51 @@ const PricingSection = () => {
 /*  CTA SECTION                                                                */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const CTASection = () => {
-  const { open } = useVideoModal();
   return (
-  <section className="py-32 bg-white relative overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-      <motion.div {...fadeUp(0)} className="flex flex-col items-center gap-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-blue-200">
-          <Sparkles size={12} /> Ready to Transform?
-        </div>
-        <h2 className="text-4xl md:text-6xl font-black text-blue-950 tracking-tighter leading-tight">
-          Your school deserves<br />
-          <span className="text-blue-400">better software.</span>
-        </h2>
-        <p className="text-lg text-slate-500 font-medium max-w-xl">
-          Join 500+ schools already running smarter with OneSchool. Setup takes less than a day.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-blue-600 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
-          >
-            Start Free Trial <ArrowRight size={18} />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="bg-white text-blue-600 border border-blue-100 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2 hover:bg-blue-50 hover:shadow-lg transition-all"
-          >
-            Book a Demo
-          </motion.button>
-        </div>
-      </motion.div>
+  <section className="py-24 bg-white relative overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+        {/* LEFT — text content */}
+        <motion.div {...fadeLeft(0)} className="flex flex-col gap-7">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest w-fit shadow-lg shadow-blue-200">
+            <Sparkles size={12} /> Ready to Transform?
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-blue-950 tracking-tighter leading-tight">
+            Your school deserves<br />
+            <span className="text-blue-400">better software.</span>
+          </h2>
+          <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-lg">
+            Join 500+ schools already running smarter with OneSchool. Setup takes less than a day.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-blue-600 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+            >
+              Start Free Trial <ArrowRight size={18} />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-white text-blue-600 border border-blue-200 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2 hover:bg-blue-50 hover:shadow-lg transition-all"
+            >
+              Book a Demo
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* RIGHT — image */}
+        <motion.div {...fadeRight(0.1)} className="relative">
+          <img
+            src="https://i1-c.pinimg.com/736x/59/4b/a4/594ba4907efb803b08451308c02926ea.jpg"
+            alt="School"
+            className="w-full h-[480px] object-cover object-center"
+          />
+        </motion.div>
+
+      </div>
     </div>
   </section>
   );
@@ -1274,7 +1266,6 @@ export default function LandingPage() {
       <main className="min-h-screen bg-white overflow-x-hidden">
         <Navbar />
         <HeroSection />
-        <FeatureStrip />
         <ShowcaseSection />
         <AutomationSection />
         <WhatsAppSection />
