@@ -83,7 +83,7 @@ const VideoModalProvider = ({ children }: { children: React.ReactNode }) => {
 
               {/* Footer */}
               <div className="px-6 py-4 flex items-center justify-between border-t border-white/10">
-                <p className="text-xs text-white/30 font-medium">OneSchool · School Management Platform</p>
+                <p className="text-xs text-white/30 font-medium">One School · School Management Platform</p>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="text-xs text-white/40 hover:text-white transition-colors font-medium"
@@ -171,7 +171,7 @@ const Navbar = () => {
                 color: scrolled ? '#0f172a' : '#ffffff',
               }}
             >
-              OneSchool<span style={{ color: '#3B82F6' }}>.</span>
+              One School<span style={{ color: '#3B82F6' }}>.</span>
             </span>
           </motion.div>
 
@@ -719,7 +719,7 @@ const AutomationSection = () => {
             Your school runs itself.
           </h2>
           <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">
-            OneSchool automates the repetitive — so your staff focuses on what matters: teaching
+            One School automates the repetitive — so your staff focuses on what matters: teaching
             and growing.
           </p>
         </motion.div>
@@ -1131,7 +1131,7 @@ const CTASection = () => {
             <span className="text-blue-400">better software.</span>
           </h2>
           <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-lg">
-            Join 500+ schools already running smarter with OneSchool. Setup takes less than a day.
+            Join 500+ schools already running smarter with One School. Setup takes less than a day.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <motion.button
@@ -1185,7 +1185,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <div>
               <div className="text-2xl font-bold tracking-tighter mb-4" style={{ letterSpacing: '-0.03em' }}>
-                OneSchool<span style={{ color: '#3B82F6' }}>.</span>
+                One School<span style={{ color: '#3B82F6' }}>.</span>
               </div>
               <p className="text-sm text-white/40 font-medium leading-relaxed">
                 Empowering schools through smart management, seamless communication, and transformative student experiences across the globe.
@@ -1261,12 +1261,6 @@ const Footer = () => {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={15} className="text-blue-400/60 shrink-0" />
-                <a href="tel:+919652301382" className="text-sm text-white/50 hover:text-white transition-colors font-medium">
-                  +91 96523 01382
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
                 <Mail size={15} className="text-blue-400/60 shrink-0" />
                 <a href="mailto:info@onepathsolutions.com" className="text-sm text-white/50 hover:text-white transition-colors font-medium">
                   info@onepathsolutions.com
@@ -1302,7 +1296,10 @@ const Footer = () => {
         {/* ── Bottom bar ── */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-xs text-white/25 font-medium">
-            © {new Date().getFullYear()} OneSchool. All rights reserved.
+            © {new Date().getFullYear()} One School. All rights reserved.
+          </p>
+          <p className="text-xs text-white/20 font-medium">
+            Product Owned By <a href="https://one-hr.onepathsolutions.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">OnePathSolutions</a>
           </p>
           <p className="text-xs text-white/20 font-medium">
             Built for schools that mean business.
