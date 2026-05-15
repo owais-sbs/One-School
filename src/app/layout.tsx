@@ -21,13 +21,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "One School",
     description: "The digital spine for your institution — connecting students, parents, teachers, and administrators in one premium SaaS ecosystem.",
-    images: ["/hero.png"],
+    images: ["https://i1-c.pinimg.com/736x/85/55/1a/85551a56517d3ddd4a42e407e916c7c9.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "One School",
     description: "Streamline your institution with the ultimate smart school management system.",
-    images: ["/hero.png"],
+    images: ["https://i1-c.pinimg.com/736x/85/55/1a/85551a56517d3ddd4a42e407e916c7c9.jpg"],
   },
 };
 
