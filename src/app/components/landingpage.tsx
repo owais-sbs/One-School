@@ -889,51 +889,33 @@ const PricingSection = () => {
   const plans = [
     {
       name: 'Starter',
-      price: '₹4,999',
-      period: '/mo',
-      desc: 'Perfect for small schools getting started.',
-      features: ['Up to 300 students', 'Attendance & Fees', 'WhatsApp Alerts', 'Basic Reports'],
+      price: '$59',
+      period: '/month',
+      desc: 'Up to 100 students',
+      features: ['Attendance', 'Parent dashboard', 'Daily diary', 'Notifications'],
       cta: 'Get Started',
       highlight: false,
     },
     {
       name: 'Growth',
-      price: '₹9,999',
-      period: '/mo',
-      desc: 'For growing schools that need more power.',
-      features: [
-        'Up to 1,000 students',
-        'All Starter features',
-        'Transport Management',
-        'Advanced Analytics',
-      ],
+      price: '$129',
+      period: '/month',
+      desc: 'Up to 300 students',
+      features: ['Accounting', 'CRM', 'Staff management', 'All Starter features'],
       cta: 'Get Started',
-      highlight: false,
-    },
-    {
-      name: 'Pro',
-      price: '₹18,999',
-      period: '/mo',
-      desc: 'Full-featured for established institutions.',
-      features: [
-        'Up to 3,000 students',
-        'All Growth features',
-        'Library Management',
-        'Custom Branding',
-      ],
-      cta: 'Most Popular',
       highlight: true,
     },
     {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: '',
-      desc: 'For large school groups and chains.',
+      name: 'Scale',
+      price: '$249',
+      period: '/month',
+      desc: 'Up to 1000 students',
       features: [
-        'Unlimited students',
-        'All Pro features',
-        'Dedicated Support',
-        'SLA Guarantee',
+        'HRMS',
+        'AI tools',
+        'Advanced analytics',
+        'Priority support',
+        'All Growth features',
       ],
       cta: 'Contact Sales',
       highlight: false,
@@ -966,7 +948,7 @@ const PricingSection = () => {
             initial: {},
             whileInView: { transition: { staggerChildren: 0.1 } },
           }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           {plans.map((plan, i) => (
             <motion.div
@@ -1050,6 +1032,56 @@ const PricingSection = () => {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Add-ons & Additional Students */}
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Add-ons */}
+          <motion.div {...fadeUp(0.2)} className="bg-slate-50 rounded-[2.5rem] p-10 border border-black shadow-sm">
+            <h3 className="text-2xl font-black text-blue-950 mb-8 flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <Zap size={20} />
+              </div>
+              Add-ons
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {['Extra students', 'WhatsApp usage', 'AI credits', 'Extra storage'].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-black shadow-sm hover:shadow-md transition-shadow group">
+                  <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                    <CheckCircle2 size={14} className="text-blue-600 group-hover:text-white" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">{item}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Additional Students */}
+          <motion.div {...fadeUp(0.3)} className="bg-slate-50 rounded-[2.5rem] p-10 border border-black shadow-sm">
+            <h3 className="text-2xl font-black text-blue-950 mb-8 flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <Users size={20} />
+              </div>
+              Additional Students
+            </h3>
+            <div className="space-y-4">
+              {[
+                { range: '100–300', price: '+$20/month' },
+                { range: '300–500', price: '+$40/month' },
+                { range: '500+', price: 'Custom' },
+              ].map((item, i) => (
+                <div key={i} className="flex justify-between items-center bg-white p-5 rounded-2xl border border-black shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-black text-slate-900">{item.range} Students</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Enrollment Tier</span>
+                  </div>
+                  <div className="bg-blue-50 px-4 py-2 rounded-xl">
+                    <span className="text-lg font-black text-blue-600">{item.price}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
