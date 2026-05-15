@@ -396,8 +396,7 @@ const BrowserMockup = ({ src, alt, url }: { src: string; alt: string; url: strin
       </div>
     </div>
     <div className="overflow-hidden">
-      <img src={src} alt={alt} className="w-full h-auto object-cover object-top block"
-        style={{ filter: 'grayscale(100%) contrast(1.1) brightness(1.02)' }} />
+      <img src={src} alt={alt} className="w-full h-auto object-cover object-top block" />
     </div>
   </div>
 );
@@ -409,7 +408,7 @@ const ShowcaseSection = () => {
     {/* Dot grid background */}
     <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:22px_22px] opacity-[0.05] pointer-events-none" />
 
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-24">
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-32">
 
       {/* ── Section header ── */}
       <motion.div {...fadeUp(0)} className="text-center">
@@ -425,12 +424,12 @@ const ShowcaseSection = () => {
         </p>
       </motion.div>
 
-      {/* ══ ROW 1 — Dashboard mockup LEFT · content RIGHT ══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+      {/* ══ ROW 1 — Admin Dashboard mockup LEFT · content RIGHT ══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 xl:gap-20 items-center">
 
-        {/* LEFT — small dashboard mockup */}
-        <motion.div {...fadeLeft(0)} className="relative">
-          <BrowserMockup src="/image.png" alt="OneSchool Dashboard" url="app.oneschool.io/dashboard" />
+        {/* LEFT — Admin mockup */}
+        <motion.div {...fadeLeft(0)} className="lg:col-span-3 relative">
+          <BrowserMockup src="/Admin.png" alt="Admin Dashboard" url="app.oneschool.io/admin" />
           {/* Floating pill bottom-left */}
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.6 }}
@@ -439,8 +438,8 @@ const ShowcaseSection = () => {
               <Users size={16} className="text-white" />
             </div>
             <div>
-              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Students</div>
-              <div className="text-xl font-black leading-none">1,240</div>
+              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Total Students</div>
+              <div className="text-xl font-black leading-none">15,000</div>
             </div>
           </motion.div>
           {/* Floating pill top-right */}
@@ -457,24 +456,24 @@ const ShowcaseSection = () => {
           </motion.div>
         </motion.div>
 
-        {/* RIGHT — Dashboard copy */}
-        <motion.div {...fadeRight(0.1)} className="flex flex-col gap-6">
+        {/* RIGHT — Admin copy */}
+        <motion.div {...fadeRight(0.1)} className="lg:col-span-2 flex flex-col gap-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest w-fit">
-            <LayoutDashboard size={11} /> Main Dashboard
+            <LayoutDashboard size={11} /> Admin Dashboard
           </div>
           <h3 className="text-3xl md:text-4xl font-black text-blue-950 tracking-tighter leading-[1.1]">
-            Everything at a glance.<br />
-            <span className="text-blue-400">Nothing missed.</span>
+            Control everything.<br />
+            <span className="text-blue-400">From one command center.</span>
           </h3>
           <p className="text-base text-slate-500 font-medium leading-relaxed">
-            The main dashboard gives principals and admins a live bird&apos;s-eye view of the entire school — students, fees, attendance, and staff — all in one place.
+            The Admin dashboard provides school owners and principals with absolute clarity. Track enrollments, teacher performance, and financial health in real-time.
           </p>
           <ul className="space-y-3">
             {[
-              'Live student count with enrollment trend chart',
-              'Daily attendance rate with class-wise breakdown',
-              'Fee collection progress and pending dues',
-              'Staff presence and leave summary',
+              'Real-time student & teacher statistics',
+              'Advanced exam result analytics & trends',
+              'Fee collection & financial overview',
+              'Automated administrative workflows',
             ].map((text, i) => (
               <li key={i} className="flex items-start gap-3">
               <CheckCircle2 size={15} className="text-blue-600 mt-0.5 shrink-0" />
@@ -485,9 +484,9 @@ const ShowcaseSection = () => {
           {/* Mini stat cards */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Students', val: '1,240', dark: true },
-              { label: 'Attendance', val: '94%', dark: false },
-              { label: 'Fees Due', val: '28%', dark: false },
+              { label: 'Students', val: '15.00K', dark: true },
+              { label: 'Teachers', val: '2.00K', dark: false },
+              { label: 'Earnings', val: '$19.3K', dark: false },
             ].map((s, i) => (
               <div key={i} className={`rounded-2xl p-4 ${s.dark ? 'bg-black text-white' : 'bg-slate-50 border border-gray-100 text-slate-900'}`}>
                 <div className={`text-[9px] font-bold uppercase tracking-widest mb-1 ${s.dark ? 'text-white/40' : 'text-slate-400'}`}>{s.label}</div>
@@ -497,32 +496,32 @@ const ShowcaseSection = () => {
           </div>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             className="w-fit bg-blue-600 text-white px-7 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
-            Explore Dashboard <ArrowRight size={15} />
+            Explore Admin Panel <ArrowRight size={15} />
           </motion.button>
         </motion.div>
       </div>
 
-      {/* ══ ROW 2 — content LEFT · Student list mockup RIGHT ══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+      {/* ══ ROW 2 — Teacher mockup LEFT · content RIGHT ══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 xl:gap-20 items-center">
 
-        {/* LEFT — Student list copy */}
-        <motion.div {...fadeLeft(0.1)} className="flex flex-col gap-6 order-2 lg:order-1">
+        {/* LEFT — Teacher copy */}
+        <motion.div {...fadeLeft(0.1)} className="lg:col-span-2 flex flex-col gap-6 order-2 lg:order-1">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest w-fit">
-            <Users size={11} /> Student Management
+            <Users size={11} /> Teacher Management
           </div>
           <h3 className="text-3xl md:text-4xl font-black text-blue-950 tracking-tighter leading-[1.1]">
-            Every student.<br />
-            <span className="text-blue-400">Fully organised.</span>
+            Empower your educators.<br />
+            <span className="text-blue-400">Simplify teaching.</span>
           </h3>
           <p className="text-base text-slate-500 font-medium leading-relaxed">
-            Manage complete student profiles, track academic progress, handle admissions, and generate ID cards — all from a single, searchable student list.
+            Teachers can manage their classrooms, mark attendance, post homework, and generate report cards with just a few clicks. No more manual entry.
           </p>
           <ul className="space-y-3">
             {[
-              'Searchable student database with smart filters',
-              'Digital profiles with photos and documents',
-              'Class & section assignment management',
-              'One-click ID card and report card generation',
+              'Classroom management & student lists',
+              'Digital attendance & leave tracking',
+              'Smart assignment & homework posting',
+              'One-click report card generation',
             ].map((text, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2 size={15} className="text-blue-600 mt-0.5 shrink-0" />
@@ -530,41 +529,15 @@ const ShowcaseSection = () => {
               </li>
             ))}
           </ul>
-          {/* Inline student list preview */}
-          <div className="bg-white border border-black rounded-2xl overflow-hidden shadow-sm">
-            <div className="px-4 py-3 border-b border-black/10 flex items-center justify-between bg-slate-50/50">
-              <span className="text-xs font-black text-blue-900 uppercase tracking-widest">Students</span>
-              <span className="text-[10px] text-slate-400 font-medium">1,240 total</span>
-            </div>
-            {[
-              { name: 'Liam Smith', cls: 'Class 10-A', fee: 'Paid' },
-              { name: 'Aisha Khan', cls: 'Class 9-B', fee: 'Pending' },
-              { name: 'Rohan Mehta', cls: 'Class 11-C', fee: 'Paid' },
-              { name: 'Sara Ahmed', cls: 'Class 8-A', fee: 'Paid' },
-            ].map((s, i, arr) => (
-              <div key={i} className={`px-4 py-3 flex items-center gap-3 ${i < arr.length - 1 ? 'border-b border-gray-50' : ''}`}>
-                <div className="w-7 h-7 bg-slate-100 rounded-full flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-black text-slate-600">{s.name[0]}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-900 truncate">{s.name}</div>
-                  <div className="text-[10px] text-slate-400 font-medium">{s.cls}</div>
-                </div>
-                <span className={`text-[9px] font-bold px-2.5 py-1 rounded-full ${s.fee === 'Paid' ? 'bg-blue-600 text-white' : 'bg-orange-50 text-orange-600'}`}>
-                  {s.fee}
-                </span>
-              </div>
-            ))}
-          </div>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             className="w-fit bg-blue-600 text-white px-7 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
-            View Student Module <ArrowRight size={15} />
+            View Teacher Module <ArrowRight size={15} />
           </motion.button>
         </motion.div>
 
-        {/* RIGHT — small student list mockup */}
-        <motion.div {...fadeRight(0)} className="relative order-1 lg:order-2">
-          <BrowserMockup src="/image2.png" alt="OneSchool Student List" url="app.oneschool.io/students" />
+        {/* RIGHT — Teacher mockup */}
+        <motion.div {...fadeRight(0)} className="lg:col-span-3 relative order-1 lg:order-2">
+          <BrowserMockup src="/teacher.png" alt="Teacher Dashboard" url="app.oneschool.io/teacher" />
           {/* Floating pill bottom-right */}
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.6 }}
@@ -573,8 +546,8 @@ const ShowcaseSection = () => {
               <Users size={16} className="text-slate-900" />
             </div>
             <div>
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Total Students</div>
-              <div className="text-xl font-black text-slate-900 leading-none">1,240</div>
+              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Staff</div>
+              <div className="text-xl font-black text-slate-900 leading-none">2.00K</div>
             </div>
           </motion.div>
           {/* Floating pill top-left */}
@@ -585,10 +558,62 @@ const ShowcaseSection = () => {
               <Calendar size={16} className="text-white" />
             </div>
             <div>
-              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Active</div>
-              <div className="text-xl font-black leading-none">88 Staff</div>
+              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Attendance</div>
+              <div className="text-xl font-black leading-none">98.2%</div>
             </div>
           </motion.div>
+        </motion.div>
+      </div>
+
+      {/* ══ ROW 3 — Parent mockup LEFT · content RIGHT ══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 xl:gap-20 items-center">
+
+        {/* LEFT — Parent mockup */}
+        <motion.div {...fadeLeft(0)} className="lg:col-span-3 relative">
+          <BrowserMockup src="/parent.png" alt="Parent Dashboard" url="app.oneschool.io/parent" />
+          {/* Floating pill bottom-left */}
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.6 }}
+            className="absolute -bottom-5 -left-4 bg-blue-600 text-white rounded-2xl px-5 py-3.5 shadow-2xl hidden sm:flex items-center gap-3 shadow-blue-500/20">
+            <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+              <MessageSquare size={16} className="text-white" />
+            </div>
+            <div>
+              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Messages</div>
+              <div className="text-xl font-black leading-none">12 New</div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT — Parent copy */}
+        <motion.div {...fadeRight(0.1)} className="lg:col-span-2 flex flex-col gap-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest w-fit">
+            <Users size={11} /> Parent Dashboard
+          </div>
+          <h3 className="text-3xl md:text-4xl font-black text-blue-950 tracking-tighter leading-[1.1]">
+            Connected parents.<br />
+            <span className="text-blue-400">Successful students.</span>
+          </h3>
+          <p className="text-base text-slate-500 font-medium leading-relaxed">
+            The parent portal keeps families engaged. Track academic progress, pay fees, and receive instant school alerts — all from a single dashboard.
+          </p>
+          <ul className="space-y-3">
+            {[
+              'Real-time academic progress tracking',
+              'Secure online fee payments & history',
+              'Instant WhatsApp & portal notifications',
+              'Direct communication with school staff',
+            ].map((text, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle2 size={15} className="text-blue-600 mt-0.5 shrink-0" />
+                <span className="text-sm text-slate-600 font-medium">{text}</span>
+              </li>
+            ))}
+          </ul>
+          <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            className="w-fit bg-blue-600 text-white px-7 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+            Explore Parent Portal <ArrowRight size={15} />
+          </motion.button>
         </motion.div>
       </div>
 
