@@ -910,171 +910,387 @@ const WhatsAppSection = () => {
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  PRICING SECTION                                                            */
 /* ─────────────────────────────────────────────────────────────────────────── */
+
+/** Billing toggle – reusable component */
+const PricingToggle = ({
+  isAnnual,
+  onChange,
+}: {
+  isAnnual: boolean;
+  onChange: (val: boolean) => void;
+}) => (
+  <div className="flex items-center justify-center gap-4">
+    <button
+      onClick={() => onChange(false)}
+      className={`text-sm font-bold transition-colors ${
+        !isAnnual ? 'text-blue-950' : 'text-slate-400'
+      }`}
+    >
+      Monthly
+    </button>
+
+    {/* Toggle track */}
+    <button
+      onClick={() => onChange(!isAnnual)}
+      className="relative w-14 h-7 rounded-full bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      aria-label="Toggle billing period"
+    >
+      <motion.div
+        layout
+        transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+        className={`absolute top-1 w-5 h-5 rounded-full shadow-md ${
+          isAnnual ? 'bg-emerald-500 left-8' : 'bg-white left-1'
+        }`}
+      />
+    </button>
+
+    <button
+      onClick={() => onChange(true)}
+      className={`text-sm font-bold transition-colors flex items-center gap-2 ${
+        isAnnual ? 'text-blue-950' : 'text-slate-400'
+      }`}
+    >
+      Annual
+      <AnimatePresence>
+        {isAnnual && (
+          <motion.span
+            key="save-badge"
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.7 }}
+            transition={{ duration: 0.25 }}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wide"
+          >
+            Save 10%
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
+  </div>
+);
+
+/** Config-driven plan data */
+interface PlanConfig {
+  name: string;
+  monthlyPrice: number;
+  desc: string;
+  features: string[];
+  cta: string;
+  highlight: boolean;
+  badge?: string;
+}
+
+const PLAN_CONFIGS: PlanConfig[] = [
+  {
+    name: 'Starter',
+    monthlyPrice: 59,
+    desc: 'Up to 100 students',
+    features: ['Attendance', 'Parent dashboard', 'Daily diary', 'Notifications'],
+    cta: 'Get Started',
+    highlight: false,
+  },
+  {
+    name: 'Growth',
+    monthlyPrice: 129,
+    desc: 'Up to 300 students',
+    features: ['Accounting', 'CRM', 'Staff management', 'All Starter features'],
+    cta: 'Get Started',
+    highlight: true,
+    badge: 'Most Popular',
+  },
+  {
+    name: 'Scale',
+    monthlyPrice: 249,
+    desc: 'Up to 1000 students',
+    features: ['HRMS', 'AI tools', 'Advanced analytics', 'Priority support', 'All Growth features'],
+    cta: 'Contact Sales',
+    highlight: false,
+  },
+];
+
+/** Derived pricing helpers */
+const getAnnualMonthly = (monthly: number) =>
+  parseFloat((monthly * 0.9).toFixed(2));
+const getAnnualTotal = (monthly: number) =>
+  parseFloat((monthly * 12 * 0.9).toFixed(2));
+const getAnnualSavings = (monthly: number) =>
+  parseFloat((monthly * 12 - monthly * 12 * 0.9).toFixed(2));
+
+/** Single pricing card */
+const PricingCard = ({
+  plan,
+  isAnnual,
+  index,
+}: {
+  plan: PlanConfig;
+  isAnnual: boolean;
+  index: number;
+}) => {
+  const displayMonthly = isAnnual
+    ? getAnnualMonthly(plan.monthlyPrice)
+    : plan.monthlyPrice;
+  const annualTotal = getAnnualTotal(plan.monthlyPrice);
+  const savings = getAnnualSavings(plan.monthlyPrice);
+
+  return (
+    <motion.div
+      variants={{
+        initial: { opacity: 0, y: 30 },
+        whileInView: { opacity: 1, y: 0 },
+      }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 }}
+      whileHover={{ y: -6 }}
+      className={`rounded-3xl p-8 flex flex-col gap-5 transition-all duration-300 border-2 relative ${
+        plan.highlight
+          ? 'bg-blue-600 text-white shadow-2xl shadow-blue-500/30 scale-[1.02] border-blue-400'
+          : 'bg-white border-black shadow-sm hover:shadow-xl'
+      }`}
+    >
+      {/* Most popular badge */}
+      {plan.badge && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+          <span className="px-4 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/30 whitespace-nowrap">
+            {plan.badge}
+          </span>
+        </div>
+      )}
+
+      {/* Plan name */}
+      <div
+        className={`text-[10px] font-bold uppercase tracking-widest ${
+          plan.highlight ? 'text-blue-200' : 'text-slate-400'
+        }`}
+      >
+        {plan.name}
+      </div>
+
+      {/* Price block */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-end gap-1.5">
+          {/* Strikethrough original when annual */}
+          {isAnnual && (
+            <motion.span
+              key="original"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`text-lg font-bold line-through ${
+                plan.highlight ? 'text-blue-300' : 'text-slate-300'
+              }`}
+            >
+              ${plan.monthlyPrice}
+            </motion.span>
+          )}
+          <motion.span
+            key={`price-${isAnnual}`}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className={`text-4xl font-black tracking-tighter ${
+              plan.highlight ? 'text-white' : 'text-blue-950'
+            }`}
+          >
+            ${displayMonthly}
+          </motion.span>
+          <span
+            className={`text-sm font-medium mb-1 ${
+              plan.highlight ? 'text-blue-200' : 'text-slate-400'
+            }`}
+          >
+            /month
+          </span>
+        </div>
+
+        {/* Annual billing sub-line */}
+        <AnimatePresence mode="wait">
+          {isAnnual ? (
+            <motion.div
+              key="annual-info"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <p className={`text-xs font-semibold ${plan.highlight ? 'text-blue-200' : 'text-slate-500'}`}>
+                Billed annually at ${annualTotal}/year
+              </p>
+              <p className={`text-xs font-bold mt-0.5 ${plan.highlight ? 'text-emerald-300' : 'text-emerald-600'}`}>
+                Save ${savings}/year
+              </p>
+            </motion.div>
+          ) : (
+            <motion.p
+              key="monthly-info"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className={`text-sm font-medium overflow-hidden ${
+                plan.highlight ? 'text-blue-200' : 'text-slate-500'
+              }`}
+            >
+              {plan.desc}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        {isAnnual && (
+          <p className={`text-xs font-medium ${plan.highlight ? 'text-blue-200' : 'text-slate-500'}`}>
+            {plan.desc}
+          </p>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div className={`h-px ${plan.highlight ? 'bg-blue-500' : 'bg-slate-100'}`} />
+
+      {/* Features */}
+      <ul className="space-y-2.5 flex-1">
+        {plan.features.map((feat, j) => (
+          <li key={j} className="flex items-center gap-2.5">
+            <CheckCircle2
+              size={14}
+              className={plan.highlight ? 'text-blue-200' : 'text-blue-500'}
+            />
+            <span
+              className={`text-sm font-medium ${
+                plan.highlight ? 'text-blue-100' : 'text-slate-600'
+              }`}
+            >
+              {feat}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA */}
+      <motion.button
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        className={`w-full py-3.5 rounded-2xl text-sm font-bold transition-colors ${
+          plan.highlight
+            ? 'bg-white text-blue-600 hover:bg-blue-50'
+            : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
+        }`}
+      >
+        {plan.cta}
+      </motion.button>
+    </motion.div>
+  );
+};
+
 const PricingSection = () => {
-  const plans = [
-    {
-      name: 'Starter',
-      price: '$59',
-      period: '/month',
-      desc: 'Up to 100 students',
-      features: ['Attendance', 'Parent dashboard', 'Daily diary', 'Notifications'],
-      cta: 'Get Started',
-      highlight: false,
-    },
-    {
-      name: 'Growth',
-      price: '$129',
-      period: '/month',
-      desc: 'Up to 300 students',
-      features: ['Accounting', 'CRM', 'Staff management', 'All Starter features'],
-      cta: 'Get Started',
-      highlight: true,
-    },
-    {
-      name: 'Scale',
-      price: '$249',
-      period: '/month',
-      desc: 'Up to 1000 students',
-      features: [
-        'HRMS',
-        'AI tools',
-        'Advanced analytics',
-        'Priority support',
-        'All Growth features',
-      ],
-      cta: 'Contact Sales',
-      highlight: false,
-    },
-  ];
+  const [isAnnual, setIsAnnual] = useState(true);
 
   return (
     <section id="plans" className="py-24 bg-white relative overflow-hidden">
-      {/* Top gradient fade from black (WhatsApp section) */}
+      {/* Top gradient fade from black */}
       <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black to-transparent pointer-events-none z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div {...fadeUp(0)} className="text-center mb-20">
+
+        {/* ── Section header ── */}
+        <motion.div {...fadeUp(0)} className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest mb-6 shadow-lg shadow-blue-200">
             <Sparkles size={12} /> Simple Pricing
           </div>
-          <h2 className="text-4xl md:text-6xl font-black text-blue-950 mb-6 tracking-tighter">
+          <h2 className="text-4xl md:text-6xl font-black text-blue-950 mb-4 tracking-tighter">
             Plans for every school.
           </h2>
-          <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">
-            No hidden fees. No long-term lock-ins. Cancel anytime.
+          <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto mb-8">
+            No hidden fees. No surprises. Start or stop anytime.
           </p>
+
+          {/* Annual savings banner */}
+          <AnimatePresence>
+            {isAnnual && (
+              <motion.div
+                key="savings-banner"
+                initial={{ opacity: 0, y: -12, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12, scale: 0.95 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold shadow-sm mb-8"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Get 10% off with Annual Billing
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Billing toggle */}
+          <motion.div {...fadeUp(0.1)} className="flex justify-center">
+            <div className="inline-flex items-center gap-2 bg-slate-100 rounded-2xl px-5 py-3 shadow-inner">
+              <PricingToggle isAnnual={isAnnual} onChange={setIsAnnual} />
+            </div>
+          </motion.div>
         </motion.div>
 
+        {/* ── Pricing cards ── */}
         <motion.div
           initial="initial"
           whileInView="whileInView"
           viewport={{ once: true, margin: '-60px' }}
-          variants={{
-            initial: {},
-            whileInView: { transition: { staggerChildren: 0.1 } },
-          }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={{ initial: {}, whileInView: { transition: { staggerChildren: 0.1 } } }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
         >
-          {plans.map((plan, i) => (
-            <motion.div
-              key={i}
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                whileInView: { opacity: 1, y: 0 },
-              }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -6 }}
-              className={`rounded-3xl p-8 flex flex-col gap-5 transition-all duration-300 border-2 ${
-                plan.highlight
-                  ? 'bg-blue-400 text-white shadow-2xl shadow-blue-400/30 scale-[1.02] border-blue-300'
-                  : 'bg-white border-black shadow-sm hover:shadow-xl'
-              }`}
-            >
-              <div>
-                <div
-                  className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${
-                    plan.highlight ? 'text-white/40' : 'text-slate-400'
-                  }`}
-                >
-                  {plan.name}
-                </div>
-                <div className="flex items-end gap-1 mb-2">
-                  <span
-                    className={`text-4xl font-black tracking-tighter ${
-                      plan.highlight ? 'text-white' : 'text-blue-950'
-                    }`}
-                  >
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span
-                      className={`text-sm font-medium mb-1 ${
-                        plan.highlight ? 'text-white/40' : 'text-slate-400'
-                      }`}
-                    >
-                      {plan.period}
-                    </span>
-                  )}
-                </div>
-                <p
-                  className={`text-sm font-medium ${
-                    plan.highlight ? 'text-white/50' : 'text-slate-500'
-                  }`}
-                >
-                  {plan.desc}
-                </p>
-              </div>
-
-              <ul className="space-y-2.5 flex-1">
-                {plan.features.map((feat, j) => (
-                  <li key={j} className="flex items-center gap-2.5">
-                    <CheckCircle2
-                      size={14}
-                      className={plan.highlight ? 'text-blue-200' : 'text-blue-400'}
-                    />
-                    <span
-                      className={`text-sm font-medium ${
-                        plan.highlight ? 'text-white/70' : 'text-slate-600'
-                      }`}
-                    >
-                      {feat}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className={`w-full py-3.5 rounded-2xl text-sm font-bold transition-colors ${
-                  plan.highlight
-                    ? 'bg-white text-blue-600 hover:bg-blue-50'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
-                }`}
-              >
-                {plan.cta}
-              </motion.button>
-            </motion.div>
+          {PLAN_CONFIGS.map((plan, i) => (
+            <PricingCard key={plan.name} plan={plan} isAnnual={isAnnual} index={i} />
           ))}
         </motion.div>
 
-        {/* Add-ons & Additional Students */}
+        {/* ── Billing note ── */}
+        <motion.p {...fadeUp(0.2)} className="text-center text-sm text-slate-400 font-medium mt-8">
+          {isAnnual
+            ? 'Annual subscription billed once per year. Save 10% compared to monthly billing.'
+            : 'No long-term commitment. Cancel anytime.'}
+        </motion.p>
+
+        {/* ── Add-ons & Additional Students ── */}
         <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
           {/* Add-ons */}
           <motion.div {...fadeUp(0.2)} className="bg-slate-50 rounded-[2.5rem] p-10 border border-black shadow-sm">
-            <h3 className="text-2xl font-black text-blue-950 mb-8 flex items-center gap-3">
+            <h3 className="text-2xl font-black text-blue-950 mb-2 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
                 <Zap size={20} />
               </div>
               Add-ons
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['Extra students', 'WhatsApp usage', 'AI credits', 'Extra storage'].map((item, i) => (
+
+            {/* Annual add-ons note */}
+            <AnimatePresence>
+              {isAnnual && (
+                <motion.p
+                  key="addons-annual-note"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5 mb-6 overflow-hidden"
+                >
+                  Annual subscribers receive 10% discount on eligible add-ons.
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${isAnnual ? '' : 'mt-6'}`}>
+              {[
+                { label: 'WhatsApp Usage', monthly: null },
+                { label: 'AI Credits', monthly: null },
+                { label: 'Extra Storage', monthly: null },
+                { label: 'Extra Students', monthly: null },
+              ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-black shadow-sm hover:shadow-md transition-shadow group">
-                  <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                  <div className="w-6 h-6 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-600 transition-colors shrink-0">
                     <CheckCircle2 size={14} className="text-blue-600 group-hover:text-white" />
                   </div>
-                  <span className="text-sm font-bold text-slate-700">{item}</span>
+                  <div>
+                    <span className="text-sm font-bold text-slate-700 block">{item.label}</span>
+                    {isAnnual && (
+                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">10% off</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1090,18 +1306,44 @@ const PricingSection = () => {
             </h3>
             <div className="space-y-4">
               {[
-                { range: '100–300', price: '+$20/month' },
-                { range: '300–500', price: '+$40/month' },
-                { range: '500+', price: 'Custom' },
+                {
+                  range: '100–300',
+                  monthly: '+$20/month',
+                  annual: '+$18/month',
+                  annualYear: '$216/year',
+                },
+                {
+                  range: '300–500',
+                  monthly: '+$40/month',
+                  annual: '+$36/month',
+                  annualYear: '$432/year',
+                },
+                { range: '500+', monthly: 'Custom', annual: 'Custom', annualYear: '' },
               ].map((item, i) => (
                 <div key={i} className="flex justify-between items-center bg-white p-5 rounded-2xl border border-black shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-slate-900">{item.range} Students</span>
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Enrollment Tier</span>
                   </div>
-                  <div className="bg-blue-50 px-4 py-2 rounded-xl">
-                    <span className="text-lg font-black text-blue-600">{item.price}</span>
-                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={isAnnual ? 'annual' : 'monthly'}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.2 }}
+                      className="bg-blue-50 px-4 py-2 rounded-xl text-right"
+                    >
+                      <span className="text-base font-black text-blue-600 block">
+                        {isAnnual ? item.annual : item.monthly}
+                      </span>
+                      {isAnnual && item.annualYear && (
+                        <span className="text-[10px] font-bold text-emerald-600">
+                          {item.annualYear}
+                        </span>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               ))}
             </div>
