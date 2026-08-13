@@ -1010,11 +1010,11 @@ const PLAN_CONFIGS: PlanConfig[] = [
 
 /** Derived pricing helpers */
 const getAnnualMonthly = (monthly: number) =>
-  parseFloat((monthly * 0.9).toFixed(2));
+  Math.round(monthly * 0.9);
 const getAnnualTotal = (monthly: number) =>
-  parseFloat((monthly * 12 * 0.9).toFixed(2));
+  Math.round(monthly * 12 * 0.9);
 const getAnnualSavings = (monthly: number) =>
-  parseFloat((monthly * 12 - monthly * 12 * 0.9).toFixed(2));
+  Math.round(monthly * 12 - monthly * 12 * 0.9);
 
 /** Single pricing card */
 const PricingCard = ({
