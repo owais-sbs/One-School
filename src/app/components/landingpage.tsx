@@ -9,6 +9,15 @@ import {
   Sparkles, Bell, Shield, Zap, BookOpen, BarChart2,
   MapPin, Phone, Mail, Play
 } from 'lucide-react';
+import DemoForm from '@/components/DemoForm';
+
+const scrollToDemo = () => {
+  document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+const scrollToPlans = () => {
+  document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  VIDEO MODAL                                                                */
@@ -191,6 +200,7 @@ const Navbar = () => {
                 { label: 'Showcase', href: '#showcase' },
                 { label: 'Automation', href: '#automation' },
                 { label: 'Plans', href: '#plans' },
+                { label: 'Contact', href: '#demo' },
               ].map((item) => (
               <a
                 key={item.label}
@@ -232,11 +242,11 @@ const Navbar = () => {
             className="md:hidden bg-white border-b border-slate-100 overflow-hidden"
           >
             <div className="px-4 py-8 space-y-6">
-              {['Home', 'Features', 'Showcase', 'Automation', 'Plans'].map((item) => (
+              {['Home', 'Features', 'Showcase', 'Automation', 'Plans', 'Contact'].map((item) => (
                 <a
                   key={item}
                   onClick={() => setIsOpen(false)}
-                  href={`#${item.toLowerCase()}`}
+                  href={item === 'Contact' ? '#demo' : `#${item.toLowerCase()}`}
                   className="block text-xl font-bold text-slate-900"
                 >
                   {item}
@@ -321,13 +331,17 @@ const HeroSection = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <motion.button
+            type="button"
+            onClick={scrollToDemo}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-full sm:w-auto bg-sky-500 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-sky-500/30 flex items-center justify-center gap-2 hover:bg-sky-400 transition-all"
           >
-            Get Started <ArrowRight size={18} />
+            Book a Demo <ArrowRight size={18} />
           </motion.button>
           <motion.button
+            type="button"
+            onClick={scrollToPlans}
             whileHover={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
             className="w-full sm:w-auto bg-black/20 backdrop-blur-md text-white border border-sky-300/40 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2"
           >
@@ -1165,6 +1179,8 @@ const PricingCard = ({
 
       {/* CTA */}
       <motion.button
+        type="button"
+        onClick={scrollToDemo}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         className={`w-full py-3.5 rounded-2xl text-sm font-bold transition-colors ${
@@ -1377,18 +1393,22 @@ const CTASection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <motion.button
+              type="button"
+              onClick={scrollToDemo}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-blue-600 text-white px-10 py-4 rounded-2xl text-base font-extrabold shadow-2xl shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
-              Start Free Trial <ArrowRight size={18} />
+              Book a Demo <ArrowRight size={18} />
             </motion.button>
             <motion.button
+              type="button"
+              onClick={scrollToPlans}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="bg-white text-blue-600 border border-blue-200 px-10 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2 hover:bg-blue-50 hover:shadow-lg transition-all"
             >
-              Book a Demo
+              View Plans
             </motion.button>
           </div>
         </motion.div>
@@ -1407,6 +1427,47 @@ const CTASection = () => {
   </section>
   );
 };
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  DEMO FORM SECTION                                                          */
+/* ─────────────────────────────────────────────────────────────────────────── */
+const DemoSection = () => (
+  <section id="demo" className="py-24 bg-slate-50 relative overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:22px_22px] opacity-[0.04] pointer-events-none" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        <motion.div {...fadeLeft(0)} className="flex flex-col gap-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest w-fit shadow-lg shadow-blue-200">
+            <Send size={12} /> Request a Demo
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-blue-950 tracking-tighter leading-tight">
+            See One School<br />
+            <span className="text-blue-400">in action.</span>
+          </h2>
+          <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-lg">
+            Tell us about your school and we&apos;ll schedule a personalised walkthrough of student management, attendance, fees, and parent communication.
+          </p>
+          <ul className="space-y-3">
+            {[
+              'Admin, teacher & parent dashboards',
+              'Attendance & fee management',
+              'WhatsApp parent notifications',
+              'Reports & analytics',
+            ].map((item, i) => (
+              <li key={i} className="flex items-center gap-3">
+                <CheckCircle2 size={15} className="text-blue-600 shrink-0" />
+                <span className="text-sm text-slate-600 font-medium">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+        <motion.div {...fadeRight(0.1)} className="relative">
+          <DemoForm />
+        </motion.div>
+      </div>
+    </div>
+  </section>
+);
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  FOOTER                                                                     */
@@ -1478,6 +1539,7 @@ const Footer = () => {
                 { label: 'Showcase', href: '#showcase' },
                 { label: 'Automation', href: '#automation' },
                 { label: 'Plans', href: '#plans' },
+                { label: 'Contact', href: '#demo' },
               ].map((item) => (
                 <li key={item.label}>
                   <a href={item.href}
@@ -1567,6 +1629,7 @@ export default function LandingPage() {
         <WhatsAppSection />
         <PricingSection />
         <CTASection />
+        <DemoSection />
         <Footer />
       </main>
     </VideoModalProvider>
