@@ -2,8 +2,12 @@
 
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Send, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { isValidEmail, isValidPhone } from "@/lib/validation";
+import {
+  buildDemoWhatsAppMessage,
+  whatsappChatUrl,
+} from "@/lib/whatsapp";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -36,7 +40,9 @@ export default function DemoForm() {
     if (!form.email.trim()) return "Work email is required.";
     if (!isValidEmail(form.email)) return "Please enter a valid work email.";
     if (!form.phone.trim()) return "Phone or WhatsApp number is required.";
-    if (!isValidPhone(form.phone)) return "Please enter a valid phone or WhatsApp number.";
+    if (!isValidPhone(form.phone)) {
+      return "Please enter a valid phone or WhatsApp number.";
+    }
     return null;
   };
 
@@ -50,8 +56,10 @@ export default function DemoForm() {
       return;
     }
 
+    if (form.website.trim()) return;
+
     const now = Date.now();
-    if (now - lastSubmitRef.current < 5000) {
+    if (now - lastSubmitRef.current < 3000) {
       setErrorMessage("Please wait a moment before submitting again.");
       setStatus("error");
       return;
@@ -59,6 +67,7 @@ export default function DemoForm() {
 
     setStatus("loading");
     setErrorMessage("");
+    lastSubmitRef.current = now;
 
     try {
       const res = await fetch("/api/demo", {
@@ -67,55 +76,60 @@ export default function DemoForm() {
         body: JSON.stringify(form),
       });
 
-      const data = await res.json();
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
 
       if (!res.ok) {
-        throw new Error(data.error ?? "Submission failed.");
+        setErrorMessage(data.error || "Unable to submit your request. Please try again.");
+        setStatus("error");
+        return;
       }
 
-      lastSubmitRef.current = Date.now();
+      const waText = buildDemoWhatsAppMessage(form);
+      window.open(whatsappChatUrl(waText), "_blank", "noopener,noreferrer");
+
       setStatus("success");
       setForm(initialForm);
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } catch {
+      setErrorMessage("Unable to submit your request. Please try again later.");
       setStatus("error");
     }
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
+
+  const labelClass =
+    "mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500";
+
   if (status === "success") {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-3xl border border-black p-10 text-center shadow-xl"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 size={32} className="text-emerald-600" />
+      <div className="space-y-4 rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+          <CheckCircle2 size={26} />
         </div>
-        <h3 className="text-2xl font-black text-blue-950 mb-3">Thank you!</h3>
-        <p className="text-slate-500 font-medium">
-          Your request has been received. Our team will contact you shortly.
+        <h3 className="text-xl font-semibold text-slate-900">Your request is noted</h3>
+        <p className="text-sm leading-relaxed text-slate-600">
+          Thank you for contacting One School. We have received your message and sent a
+          confirmation to your email. Our team will get back to you shortly.
         </p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-8 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
+          className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
         >
-          Submit another request
+          Send another request
         </button>
-      </motion.div>
+      </div>
     );
   }
 
-  const inputClass =
-    "w-full bg-slate-50 border border-black/10 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all";
-
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
-      {/* Honeypot */}
-      <div className="absolute opacity-0 pointer-events-none h-0 overflow-hidden" aria-hidden="true">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+    >
+      <div className="absolute h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input
           id="website"
@@ -128,9 +142,9 @@ export default function DemoForm() {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="demo-name" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-name" className={labelClass}>
             Full Name <span className="text-blue-600">*</span>
           </label>
           <input
@@ -144,7 +158,7 @@ export default function DemoForm() {
           />
         </div>
         <div>
-          <label htmlFor="demo-school" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-school" className={labelClass}>
             School Name <span className="text-blue-600">*</span>
           </label>
           <input
@@ -158,9 +172,9 @@ export default function DemoForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="demo-email" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-email" className={labelClass}>
             Work Email <span className="text-blue-600">*</span>
           </label>
           <input
@@ -174,7 +188,7 @@ export default function DemoForm() {
           />
         </div>
         <div>
-          <label htmlFor="demo-phone" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-phone" className={labelClass}>
             Phone / WhatsApp <span className="text-blue-600">*</span>
           </label>
           <input
@@ -189,9 +203,9 @@ export default function DemoForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="demo-country" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-country" className={labelClass}>
             Country
           </label>
           <input
@@ -204,7 +218,7 @@ export default function DemoForm() {
           />
         </div>
         <div>
-          <label htmlFor="demo-students" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          <label htmlFor="demo-students" className={labelClass}>
             Number of Students
           </label>
           <input
@@ -218,7 +232,7 @@ export default function DemoForm() {
       </div>
 
       <div>
-        <label htmlFor="demo-system" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+        <label htmlFor="demo-system" className={labelClass}>
           Current School Management System
         </label>
         <input
@@ -231,7 +245,7 @@ export default function DemoForm() {
       </div>
 
       <div>
-        <label htmlFor="demo-message" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+        <label htmlFor="demo-message" className={labelClass}>
           Requirements / Message
         </label>
         <textarea
@@ -239,16 +253,16 @@ export default function DemoForm() {
           rows={4}
           value={form.message}
           onChange={(e) => update("message", e.target.value)}
-          className={`${inputClass} resize-y min-h-[100px]`}
+          className={`${inputClass} min-h-[100px] resize-y`}
         />
       </div>
 
       {status === "error" && errorMessage && (
         <div
           role="alert"
-          className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-medium"
+          className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
         >
-          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
           {errorMessage}
         </div>
       )}
@@ -256,14 +270,14 @@ export default function DemoForm() {
       <motion.button
         type="submit"
         disabled={status === "loading"}
-        whileHover={{ scale: status === "loading" ? 1 : 1.02 }}
-        whileTap={{ scale: status === "loading" ? 1 : 0.98 }}
-        className="w-full sm:w-auto bg-blue-600 text-white px-10 py-4 rounded-2xl text-sm font-extrabold flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-200"
+        whileHover={{ scale: status === "loading" ? 1 : 1.01 }}
+        whileTap={{ scale: status === "loading" ? 1 : 0.99 }}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {status === "loading" ? (
           <>
             <Loader2 size={18} className="animate-spin" />
-            Submitting…
+            Sending…
           </>
         ) : (
           <>

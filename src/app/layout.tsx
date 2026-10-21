@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import JsonLd from "@/components/JsonLd";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -34,8 +31,9 @@ export const metadata: Metadata = {
     canonical: siteConfig.url,
   },
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: [{ url: "/faviconicon.png", type: "image/png" }],
+    shortcut: "/faviconicon.png",
+    apple: "/faviconicon.png",
   },
   openGraph: {
     type: "website",
@@ -71,12 +69,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} h-full antialiased`}
+      style={{ colorScheme: "light" }}
     >
       <head>
         <JsonLd />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        {children}
+        <WhatsAppFloat />
+      </body>
     </html>
   );
 }
