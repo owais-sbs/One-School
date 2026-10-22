@@ -4,10 +4,7 @@ import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Send, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { isValidEmail, isValidPhone } from "@/lib/validation";
-import {
-  buildDemoWhatsAppMessage,
-  whatsappChatUrl,
-} from "@/lib/whatsapp";
+
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -83,9 +80,6 @@ export default function DemoForm() {
         setStatus("error");
         return;
       }
-
-      const waText = buildDemoWhatsAppMessage(form);
-      window.open(whatsappChatUrl(waText), "_blank", "noopener,noreferrer");
 
       setStatus("success");
       setForm(initialForm);
